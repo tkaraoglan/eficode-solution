@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  frontend:
+    depends_on:
+      - backend
+    build: ./frontend
+    ports:
+      - ${FRONTEND_PORT}:${FRONTEND_PORT}
+    volumes:
+      - ./frontend/src:/usr/src/app/src
+    environment:
+      ENDPOINT: ${BACKEND_ENDPOINT}
+      HOST: ${FRONTEND_HOST}
+      PORT: ${FRONTEND_PORT}
+    command: npm start
+
+  backend:
+    build: ./backend
+    expose:
+      - ${BACKEND_PORT}
+    ports:
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    volumes:
+      - ./backend/src:/usr/src/app/src
+    environment:
+      APPID: ${APPID}
+      PORT: ${BACKEND_PORT}
+      MAP_ENDPOINT: ${MAP_ENDPOINT}
+      TARGET_CITY: ${TARGET_CITY}
+      #DEFAULT_CITY: ${DEFAULT_CITY}
+      #DEFAULT_COUNTRY: ${DEFAULT_COUNTRY}
+    command: npm run dev
