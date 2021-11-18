@@ -77,11 +77,12 @@ Resources:
           -o /usr/local/bin/docker-compose
           chmod +x /usr/local/bin/docker-compose
           yum install git -y
+          mkdir /home/ec2-user/weather
           cd /home/ec2-user/weather
-          wget https://github.com/tkaraoglan/eficode-solution/blob/main/cloud-solution-Aws/eficode/docker%2B.zip
-          unzip docker+.zip
+          wget https://github.com/tkaraoglan/eficode-solution/raw/main/cloud-solution-Aws/eficode%2B/dockerplus.zip
+          unzip dockerplus.zip && rm -r dockerplus.zip
           echo BACKEND_ENDPOINT="http://$(curl http://169.254.169.254/latest/meta-data/public-ipv4):9000/api" >> .env
-          #docker-compose up -d
+          docker-compose up -d
 Outputs:
   WebsiteURL:
     Description: Bookstore Web API URL
