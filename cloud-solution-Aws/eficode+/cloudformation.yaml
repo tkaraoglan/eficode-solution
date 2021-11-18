@@ -1,0 +1,90 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: >
+  This Cloudformation Template creates a Docker machine on EC2 Instance and
+  deploys  Openweather app, Docker Machine will run on Amazon Linux 2
+  EC2 Instance with custom security group allowing HTTP (Port 8000)
+  and SSH (Port 22) connections from anywhere.
+Mappings:
+  RegionMap:
+    us-east-1:
+      "HVM64": "ami-04ad2567c9e3d7893"
+    us-west-1:
+      "HVM64": "ami-0074ef78ecb07948c"
+    eu-west-1:
+      "HVM64": "ami-09d4a659cdd8677be"
+    eu-north-1:
+      "HVM64": "ami-08b0de3847e24ff84"
+
+Parameters:
+  KeyPairName:
+    Description: Enter the name of your Key Pair for SSH connections.
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: Must one of the existing EC2 KeyPair
+  InstanceTypeParameter:
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.medium
+      - t2.large
+    Description: Enter t2.micro, t2.medium, or t2.large. Default is t2.micro.
+
+Resources:
+  DockerMachineSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable HTTP and SSH for Bookstore Web API
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 8000
+          ToPort: 8000
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 9000
+          ToPort: 9000
+          CidrIp: 0.0.0.0/0
+  DockerMachine:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMap, !Ref "AWS::Region", HVM64]
+      InstanceType:
+        Ref: InstanceTypeParameter
+      KeyName: !Ref KeyPairName
+      SecurityGroupIds:
+        - !GetAtt DockerMachineSecurityGroup.GroupId
+      Tags:
+        -
+          Key: Name
+          Value: !Sub Docker Machine of ${AWS::StackName}
+      UserData:
+        Fn::Base64: |
+          #! /bin/bash
+          yum update -y
+          amazon-linux-extras install docker -y
+          systemctl start docker
+          systemctl enable docker
+          usermod -a -G docker ec2-user
+          curl -L "https://github.com/docker/compose/releases/download/1.26.2/docker-compose-$(uname -s)-$(uname -m)" \
+          -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+          yum install git -y
+          cd /home/ec2-user/weather
+          wget https://github.com/tkaraoglan/eficode-solution/blob/main/cloud-solution-Aws/eficode/docker%2B.zip
+          unzip docker+.zip
+          echo BACKEND_ENDPOINT="http://$(curl http://169.254.169.254/latest/meta-data/public-ipv4):9000/api" >> .env
+          #docker-compose up -d
+Outputs:
+  WebsiteURL:
+    Description: Bookstore Web API URL
+    Value: !Sub
+      - http://${PublicAddress}:8000
+      - PublicAddress: !GetAtt DockerMachine.PublicDnsName
