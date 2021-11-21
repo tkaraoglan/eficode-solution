@@ -46,6 +46,6 @@ TARGET_CITY="Helsinki,fi"
 docker-compose up
 ```
 
-# this command the process will take five to ten minutes depends on your machine. after code is compiled, you can enter the http://localhost:8000 to your browser.
+### this command the process will take five to ten minutes depends on your machine. after code is compiled, you can enter the http://localhost:8000 to your browser.
 
 TA-DA...
