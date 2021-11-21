@@ -9,8 +9,10 @@ data "aws_ami" "server_ami" {
   }
 }
 
+
 # Our default security group to access
-# the instances over SSH and HTTP
+# the instances over SSH and 8000,80,9000
+
 resource "aws_security_group" "eficode" {
   name        = "my_test"
   description = "Used in the terraform"
@@ -57,10 +59,20 @@ resource "aws_instance" "karaoglan_node" {
   ami                    = data.aws_ami.server_ami.id
   key_name               = var.key_name
   vpc_security_group_ids = [aws_security_group.eficode.id]
-
+  user_data              = templatefile(var.user_data_path,
+    {
+      APPID         = var.APPID
+      BACKEND_PORT  = var.BACKEND_PORT
+      MAP_ENDPOINT  = var.MAP_ENDPOINT
+      TARGET_CITY   = var.TARGET_CITY
+      FRONTEND_HOST = var.FRONTEND_HOST
+      FRONTEND_PORT = var.FRONTEND_PORT
+    }
+  )
   tags = {
-    Name = "eficode-openweatherapp}"
+    Name = "eficode-openweatherapp"
   }
+
 
   provisioner "file" {
     connection {
@@ -74,6 +86,18 @@ resource "aws_instance" "karaoglan_node" {
     source      = var.source_of_folder
     destination = "/home/ec2-user"
   }
+  provisioner "remote-exec" {
+    connection {
+      type        = "ssh"
+      user        = "ec2-user"
+      host        = self.public_ip
+      private_key = file(var.private_key_path)
+
+    }
+
+    script = "${path.root}/delay.sh"
+
+  }
 
   provisioner "remote-exec" {
     connection {
@@ -84,19 +108,8 @@ resource "aws_instance" "karaoglan_node" {
 
     }
     inline = [
-      "chmod +x /home/ec2-user/deploy-ansible-docker-docker-compose.sh",
-      "/home/ec2-user/deploy-ansible-docker-docker-compose.sh",
+
       "sudo ansible-playbook /home/ec2-user/ansible_playbook-aws-install-docker.yml",
     ]
   }
-  # provisioner "remote-exec" {
-  #
-  #   script = "${path.root}/delay.sh"
-  #
-  # }
-  #
-  # provisioner "local-exec" {
-  #   when    = destroy
-  #   command = "rm -f ${path.cwd}/../k3s-mtc_node-*"
-  # }
 }
