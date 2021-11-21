@@ -10,5 +10,5 @@ module "compute" {
   key_name = "tolga"
   # path of the folder which includes terraform and eficode or eficode+ folder with /
   # something like /your/path/to/eficode/
-  source_of_folder = "/Users/elifvildan/Desktop/eficode/terraform-ansible/eficode/"
+  source_of_folder = "/Users/elifvildan/Desktop/eficode/terraform-ansible/eficode+/eficode+/"
 }
