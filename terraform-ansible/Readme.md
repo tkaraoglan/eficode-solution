@@ -67,10 +67,11 @@ now in the main.tf file we have to specify some variables.
     - 4 ** source folder ** = after clone the github repo you can specify it like $HOME/eficode-solution/terraform-ansible/eficode+/eficode+/ (do not forget last "/" )
     - 5 ** API KEY ** = it is obvious.
     
-    
+![](images/ans1.png)
 
 1- now its time to go to start. make sure you are in the right path.
-![]()
+
+![](images/ans2.png)
 
 
 2- first command
@@ -79,6 +80,7 @@ now in the main.tf file we have to specify some variables.
 terraform init
 ```
 
+![](images/ans3.png)
 
 
 3- now we want to check plan.
@@ -87,18 +89,41 @@ terraform init
 terraform plan
 ```
 
-
-4- the cool part. Apply stage... in this stage terraform ask your approval... after checking the plan we write yes...
-
-
-6- after a while(depends on your instance type and internet connection, in my case t2.large it takes 10 minutes), you will see completion of creation of plan and you see and output end of the codeline....
+![](images/ans4.png)
 
 
+4- the cool part. Apply stage... in this stage terraform ask your approval... 
 
-7- now check the app by taking this ip and paste it to the browser. TA-DA....
+![](images/ans5.png)
 
+** after checking the plan we write yes... **
 
+![](images/ans6.png)
+
+![](images/ans7.png)
+
+6- after a while(depends on your instance type and internet connection, in my case t2.large it takes 10 minutes), you will see completion of creation of plan and you see an IP output end of the codeline....
+
+![](images/ans8.png)
+
+7- now check the app by taking this IP and paste it to the browser. TA-DA....
+
+![](images/ans9.png)
 
 8 - NOW its time to destroy everything.
+
+![](images/ans10.png)
+
+** after checking the plan we write yes... **
+
+![](images/ans11.png)
+
+
+9- Let's check that everything is neatly destroyed. 
+
+
+![](images/ans13.png)
     
 
+
+## THANKS FOR EVERYTHING EFICODE
