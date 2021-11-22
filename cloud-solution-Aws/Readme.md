@@ -1,6 +1,6 @@
 # Weatherapp
 
-This is my Cloud(AWS)solution of Eficode code challange.
+This is my Cloud(AWS) solution of Eficode code challange.
 
 ## Prerequisites
 
