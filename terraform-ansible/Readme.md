@@ -1,11 +1,13 @@
 # Weatherapp
 
-This is my Cloud(AWS)solution of Eficode code challange.
+This is my Terraform + Ansible solution of Eficode code challange.
 
 ## Prerequisites
 
-    An openweathermap API key.
-    AWS Account
+- An openweathermap API key.
+- AWS Account
+- Terraform installed or install from [here](https://learn.hashicorp.com/tutorials/terraform/install-cli)
+    
 
 ### My Solution
 
@@ -19,83 +21,84 @@ git clone https://github.com/tkaraoglan/eficode-solution.git
 * secondly , change directory to eficode folder;
         
 ```
-cd eficode-solution/docker-solutions/eficode+/
+cd cd eficode-solution/terraform-ansible/eficode+
 ```
 
-* now you should see cloudformation.yaml file in this folder, we will use this file a little bit later.
+* now you should see a lot of *.tf files in this folder, we will use this file a little bit later.
 
 ## before start important note
 
-this stack will work only this AZ's;
-- us-east-1
-- us-west-1
-- eu-west-1
-- eu-north-1
+we have to secure ourselfs. there are good ways for this but we choose three of them.
 
+A- 
+```
+export AWS_ACCESS_KEY_ID="anaccesskey"
+export AWS_SECRET_ACCESS_KEY="asecretkey"
+```
 
+B-
 
-1- now its time to go to AWS cloudformation page.
+Secondly you can try the AWS Profile. You can add credentials to ~/.aws/credentials file like
 
-![](images/cf1.png)
+[myprofile]
+aws_access_key_id     = anaccesskey
+aws_secret_access_key = asecretkey
 
+C-
 
-2- coming up next is using the file which mentioned before, cloudformation.yaml
+and my favourite is AWS CLI.
 
-![](images/cf2.png)
+you first must install AWS CLI from [here](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html)
 
-choose file
+```
+aws configure
+AWS Access Key ID [None]: ENTER-YOUR-ACCESS-KEY-HERE
+AWS Secret Access Key [None]: ENTER-YOUR-SECRET-KEY-HERE
+Default region name [None]: us-west-2
+Default output format [None]: 
+```
+## now we completed half of the way.
 
-![](images/cf3.png)
+now in the main.tf file we have to specify some variables.
 
-3- After clicking Next button below, next task is filling the gap with appropriate information
-
-- a = stack name whatever you want
-- b = instance type = there is three options. if you want faster process you can choose large one(a little bit pricey, consider this please)
-- c = keypairname = this is your key name to reach the instance with cli.(probably predefined, if you don't have one you can create from this [link](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
-- d = API Key = your Openweather API kEY TO HERE.
-
-![](images/cf4.png)
+    - 1 ** instance type ** = by default it is t2.large but you can choose economic one by changing it to t2.micro
+    - 2 ** your private key path ** = it is obvious. specify it like $HOME/.ssh/ids_rsa.key
+    - 3 ** your private key name ** = it is obvious. specify it like ids_rsa
+    - 4 ** source folder ** = after clone the github repo you can specify it like $HOME/eficode-solution/terraform-ansible/eficode+/eficode+/ (do not forget last "/" )
+    - 5 ** API KEY ** = it is obvious.
     
-   then click next.
+    
+
+1- now its time to go to start. make sure you are in the right path.
+![]()
 
 
-4- in the next step, you can give tags. then click next.
+2- first command
+
+```
+terraform init
+```
 
 
-![](images/cf5.png)
+
+3- now we want to check plan.
+
+```
+terraform plan
+```
 
 
-5- and we come to preview section. control the information and click the "create stack" button.
+4- the cool part. Apply stage... in this stage terraform ask your approval... after checking the plan we write yes...
 
 
-![](images/cf6.png)
+6- after a while(depends on your instance type and internet connection, in my case t2.large it takes 10 minutes), you will see completion of creation of plan and you see and output end of the codeline....
 
 
-![](images/cf7.png)
+
+7- now check the app by taking this ip and paste it to the browser. TA-DA....
 
 
-6- after a while, you will see completion of creation of stack.
 
-![](images/cf9.png)
-
-
-7- now check the ec2 status from ec2 page.
-
-![](images/cf10.png)
-
-8 - when you see the check passed, you can return the cloudformatian page.  
-in cloudformation page you can click the outputs and you should see the link. 
-
-![](images/cf11.png)
-
-10- when you click... TA-DA....
-
-![](images/Cf14.png)
-
-11- its time to delete all of them. when you click delete it should clear all of things which cloudformation stack creates.
-
-![](images/cf15.png)
-
-![](images/cf17.png)
+8 - NOW its time to destroy everything.
     
 
